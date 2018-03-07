@@ -5,14 +5,14 @@ public class StringSamples {
 
 	public static void main(String args[]) {
 		StringSamples s = new StringSamples();
-//		System.out.println(s.isRotatedString("waterbottle", "erbottlewat"));
-//		System.out.println(s.uniqueChars("abcdea"));
-//		System.out.println(s.reverseString("abcd"));
-//		System.out.println(s.removeDuplicates("abcbaghc"));
-//		System.out.println(s.areAnagrams("abccd", "dccba"));
-//		System.out.println(s.replaceSpaces("a bcds    sde "));
+		System.out.println(s.isRotatedString("waterbottle", "erbottlewat"));
+		System.out.println(s.uniqueChars("abcdea"));
+		System.out.println(s.reverseString("abcd"));
+		System.out.println(s.removeDuplicates("abcbaghc"));
+		System.out.println(s.areAnagrams("abccd", "dccba"));
+		System.out.println(s.replaceSpaces("a bcds    sde "));
 	}
-	
+
 	public boolean uniqueChars(String s) {
 		if(s == null || s.trim().length() == 0) return false;
 		
@@ -138,5 +138,6 @@ public class StringSamples {
 		
 		return false;
 	}	
+	
 	
 }
