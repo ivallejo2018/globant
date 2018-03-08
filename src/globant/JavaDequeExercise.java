@@ -2,7 +2,9 @@ package globant;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Scanner;
 import java.util.Set;
 
@@ -16,23 +18,23 @@ public class JavaDequeExercise {
 
         Deque<Integer> deque = new ArrayDeque<>(m);
 
-        int i = 0;
-        for (; i < m; i++) {
-            deque.offer(in.nextInt());
-        }
-
-        int maxUniqueIntegers = 0;
-        Set<Integer> elements = new HashSet<>(deque);
-        maxUniqueIntegers = Math.max(maxUniqueIntegers, elements.size());
-        for(;i < n; i++) {
-            deque.pollFirst();
-            deque.offer(in.nextInt());
-            elements.clear();
-            elements.addAll(deque);
-            maxUniqueIntegers = Math.max(maxUniqueIntegers, elements.size());
-        }
-
-        System.out.println(maxUniqueIntegers);
+        Map<Integer, Integer> elements = new HashMap<>();
+	    int i = 0;
+	    for (; i < m; i++) {
+	    	int next = in.nextInt();
+	    	deque.offer(next);
+	    	elements.put(next, elements.getOrDefault(next, 0) + 1);
+	    }  
+	    int max = elements.size();
+	    for(;i < n; i++) {
+	    	int first = deque.pollFirst();
+	    	if(!elements.remove(first, 1))elements.put(first, elements.get(first) - 1);
+	    	int next = in.nextInt();
+	    	deque.offer(next);
+	    	elements.put(next, elements.getOrDefault(next, 0) + 1);
+	    	max = Math.max(max, elements.size());
+	    }
+	    System.out.println(max);
     }
     
 }
