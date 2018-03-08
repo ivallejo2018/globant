@@ -18,3 +18,6 @@ removeDuplicates O(n^2)
 removeMiddle O(n)
 findNthLastElement O(n)
 addNumbers O(n)
+
+------------------------ Ejercicios con Trees ----------------------
+isBST O(n)
