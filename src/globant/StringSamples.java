@@ -11,8 +11,40 @@ public class StringSamples {
 		System.out.println(s.removeDuplicates("abcbaghc"));
 		System.out.println(s.areAnagrams("abccd", "dccba"));
 		System.out.println(s.replaceSpaces("a bcds    sde "));
+		int[][] matrix = new int[][]{{2,4,1,4},{6,4,2,2},{8,7,6,6},{9,1,2,6}};
+		s.printMatrix(matrix);
+		matrix = s.rotateImage(matrix);
+		s.printMatrix(matrix);
 	}
+	
+	private void printMatrix(int[][] matrix){
+		for(int row = 0; row < matrix.length; row++) {
+			for(int col = 0; col < matrix[row].length; col++) {
+				System.out.print(matrix[row][col] + " ");
+			}
+			System.out.println();
+		}	
+		System.out.println();
+	}
+	
+	public int[][] rotateImage(int[][] matrix) {
 
+		int n = matrix.length - 1;
+		for(int row = 0; row < matrix.length; row++) {
+			for(int col = n - row; col > row; col--) {
+				int a = matrix[n - col][n - row];	
+				matrix[n - col][n - row] = matrix[row][n - col];
+				int b = matrix[n - row][col];
+				matrix[n - row][col] = a;
+				int c = matrix[col][row]; 
+				matrix[col][row] = b;
+				matrix[row][n - col] = c;
+			}
+		}
+		
+		return matrix;
+	}
+	
 	public boolean uniqueChars(String s) {
 		if(s == null || s.trim().length() == 0) return false;
 		
