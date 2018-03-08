@@ -6,7 +6,8 @@ reverseString O(n)
 removeDuplicates 
 areAnagrams O(n)
 replaceSpaces O(n)
-isRotatedString
+isRotatedString O(n^2)
+rotateImage O(n^2)
 
 ------------------------ HackerRank ----------------------
 studentsExercise O(n)
