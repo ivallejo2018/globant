@@ -12,6 +12,7 @@ rotateImage O(n^2)
 ------------------------ HackerRank ----------------------
 studentsExercise O(n)
 bracketsExercise O(n)
+dequeExercise O(nlogn)
 
 ------------------------ Ejercicios con LinkedList ----------------------
 removeDuplicates O(n^2)
