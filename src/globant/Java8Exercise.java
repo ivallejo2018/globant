@@ -79,6 +79,14 @@ public class Java8Exercise {
 	
 		System.out.println();
 		System.out.println(je.sumElements(Arrays.asList(1, 20, 13, 45)));
+		
+		System.out.println();
+		System.out.println(
+				je.concatStrings(Arrays.asList("uno", "dos", "tres")) + " " +
+				je.concatStringsOtherVersion(Arrays.asList("cuatro", "cinco", "seis"))  + " " +
+				je.concatStringsWithCommas(Arrays.asList("siete", "ocho", "nueve"))  + " " +
+				je.getTotalChars(Arrays.asList("hola", "como", "estas")) + " " +
+				je.countWordsWithLetterH(Arrays.asList("hola", "como", "estas", "hoy", "que", "es", "ocho")));
 	}
 
 	//Obtiene una particion de adultos y otra de niños
@@ -101,5 +109,30 @@ public class Java8Exercise {
 	//Obtiene la suma de los elementos
 	public int sumElements(List<Integer> elements) {
 		return elements.stream().reduce(0, Integer::sum);
+	}
+	
+	//Produce una cadena concatenada en mayusculas de una lista de cadenas usando reduce
+	public String concatStrings(List<String> strings) {
+		return strings.stream().reduce("", String::concat).toUpperCase();
+	}
+	
+	//Produce una cadena concatenada en mayusculas de una lista de cadenas usando map y luego reduce
+	public String concatStringsOtherVersion(List<String> strings) {
+		return strings.stream().map(s -> s.toUpperCase()).reduce("", String::concat);
+	}	
+
+	//Produce una lista de cadenas separadas por comas de una lista de cadenas
+	public String concatStringsWithCommas(List<String> strings) {
+		return strings.stream().collect(joining(","));
+	}
+	
+	//Obtiene el numero total de caracteres de la lista de cadenas
+	public int getTotalChars(List<String> strings) {
+		return strings.stream().collect(Collectors.summingInt(s -> s.length()));
+	}
+	
+	//Obtiene el numero de palabras que contienen la letra 'h'
+	public long countWordsWithLetterH(List<String> strings) {
+		return strings.stream().filter(s -> s.indexOf("h") != -1).count();
 	}
 }
