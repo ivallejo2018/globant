@@ -1,12 +1,15 @@
 package globant;
 
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import static java.util.stream.Collectors.*;
+import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.joining;
+import static java.util.stream.Collectors.partitioningBy;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 class Person implements Comparator<Person>{
 	
@@ -70,6 +73,12 @@ public class Java8Exercise {
 		je.groupByNationality(people).forEach(
 				(k, l) -> { System.out.println(k + ": ") ;l.forEach(p -> System.out.println(p.getName() + " -> " + p.getNationality())); }
 		);
+		
+		System.out.println();
+		System.out.println(je.getNames(people));
+	
+		System.out.println();
+		System.out.println(je.sumElements(Arrays.asList(1, 20, 13, 45)));
 	}
 
 	//Obtiene una particion de adultos y otra de niños
@@ -82,5 +91,15 @@ public class Java8Exercise {
 	public Map<String, List<Person>> groupByNationality(List<Person> people) {
 		
 		return people.stream().collect(groupingBy(p -> p.getNationality()));
+	}
+	
+	//Obtiene los nombres separados por coma
+	public String getNames(List<Person> people) {
+		return people.stream().map(p -> p.getName()).collect(joining(", "));
+	}
+	
+	//Obtiene la suma de los elementos
+	public int sumElements(List<Integer> elements) {
+		return elements.stream().reduce(0, Integer::sum);
 	}
 }
