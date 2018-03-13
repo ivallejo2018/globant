@@ -147,6 +147,8 @@ public class Java8Exercise {
 		for(Double value : doubles) {
 			System.out.print(value + " ");
 		}
+		
+		System.out.println();
 	}
 	
 	//Convierte los elementos a UpperCase
