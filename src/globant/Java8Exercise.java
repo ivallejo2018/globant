@@ -7,13 +7,12 @@ import static java.util.stream.Collectors.partitioningBy;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import java.util.function.DoubleSupplier;
 import java.util.stream.Collectors;
 import java.util.stream.DoubleStream;
-import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 class Person implements Comparator<Person>{
@@ -63,11 +62,44 @@ public class Java8Exercise {
 
 	public static void main(String[] args) {
 		Java8Exercise je = new Java8Exercise();
+		List<String> list = new ArrayList<>();
+		list.add("Isaac");
+		list.add("Isai");
+		list.add("Roy");
+		list.add("Soco");
+		list.add("Ren");
+		List<String> list2 = new ArrayList<>();
+		list2.add("Cero");
+		list2.add("Uno");
+		list2.add("Dos");
+		
+		je.toUpperCase(list).forEach(el -> System.out.println(el));
+		
+		System.out.println();
+		je.filterLessThanFourChars(list).forEach(el -> System.out.println(el));
+		
+		System.out.println();
+		List<List<String>> matrix = new ArrayList<List<String>>();
+		matrix.add(list);
+		matrix.add(list2);
+		je.flattenMatrix(matrix).forEach(el -> System.out.println(el));
+		
+		System.out.println();
+		
 		List<Person> people = new ArrayList<>();
 		people.add(new Person("Uno", 12, "Mexicana"));
 		people.add(new Person("Dos", 42, "Inglesa"));
 		people.add(new Person("Tres", 35, "Inglesa"));
 		people.add(new Person("Cuatro", 5, "Alemana"));
+		
+		System.out.println(je.getOldestPerson(people));
+		
+		System.out.println();
+		je.getNamesUnderEighteen(people).forEach(p -> System.out.println(p));
+	
+		System.out.println();
+		je.getStatistics(people).
+			forEach((k, v) -> System.out.println(k + " -> " + v));
 		
 		System.out.println();
 		je.getPartition(people).forEach(
@@ -110,10 +142,62 @@ public class Java8Exercise {
 		je.getListOfTenRandomValues(DoubleStream.generate(() -> new Random().nextDouble() * 10).boxed()).forEach(el -> System.out.println(el));
 	
 		System.out.println();
-		System.out.println(je.getArrayOfTwentyRandomValues(DoubleStream.generate(() -> new Random().nextDouble() * 10).boxed()));
+		Double doubles[] = je.getArrayOfTwentyRandomValues(DoubleStream.generate(() -> new Random().
+				nextDouble() * 10).boxed());
+		for(Double value : doubles) {
+			System.out.print(value + " ");
+		}
+	}
+	
+	//Convierte los elementos a UpperCase
+	public List<String> toUpperCase(List<String> elements) {
+		return 
+			elements.stream().map(s -> s.toUpperCase()).
+				collect(Collectors.toList());
+	}
+	
+	//Filtra los elementos cuyo tamaño sea menor a 4 caracteres
+	public List<String> filterLessThanFourChars(List<String> elements) {
+		return 
+			elements.stream().filter(el -> el.length() < 4).
+				collect(Collectors.toList());
+	}
+	
+	//Convierte una lista de listas a lista
+	public List<String> flattenMatrix(List<List<String>> matrix) {
+		return 
+			matrix.stream().flatMap(m -> m.stream()).collect(Collectors.toList());
 	}
 
-	//Obtiene una particion de adultos y otra de ni�os
+	//Obtiene la persona de mayor edad
+	public Person getOldestPerson(List<Person> people) {
+		return
+			people.stream().
+				max((p1, p2) -> Integer.valueOf(p1.getAge()).compareTo(Integer.valueOf(p2.getAge()))).get();
+	}
+	
+	//Obtiene los nombres de las personas que tienen menos de 18 años
+	public List<String> getNamesUnderEighteen(List<Person> people) {
+		return 
+			people.stream().
+				filter(p -> p.getAge() < 18).map(p -> p.getName()).collect(Collectors.toList());
+	}
+	 
+	//Obtiene el promedio de edades
+	public Map<String, Integer> getStatistics(List<Person> people) {
+		Map<String, Integer> statistics = new HashMap<String, Integer>();
+		statistics.put("Average", 
+				Integer.valueOf((int)people.stream().mapToInt(Person::getAge).average().getAsDouble()));
+		statistics.put("Count", (int)people.stream().count());
+		statistics.put("Max age", people.stream().
+				mapToInt(p -> p.getAge()).max().getAsInt());
+		statistics.put("Min age", people.stream().
+				mapToInt(p -> p.getAge()).min().getAsInt());		
+		statistics.put("Sum", people.stream().mapToInt(Person::getAge).sum());
+		return statistics;
+	}
+	
+	//Obtiene una particion de adultos y otra de ni�os
 	public Map<Boolean, List<Person>> getPartition(List<Person> people) {
 		
 		return people.stream().collect(partitioningBy(p -> p.getAge() > 18));			
@@ -176,6 +260,7 @@ public class Java8Exercise {
 		return infinite.limit(10).collect(Collectors.toList());
 	}
 	
+	//Produce un arreglo de veinte Doubles de una stream de datos aleatorios 
 	public Double[] getArrayOfTwentyRandomValues(Stream<Double> infinite) {
 		return infinite.limit(20).collect(Collectors.toList()).toArray(new Double[20]);
 	}
