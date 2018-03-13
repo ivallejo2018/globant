@@ -9,7 +9,12 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
+import java.util.function.DoubleSupplier;
 import java.util.stream.Collectors;
+import java.util.stream.DoubleStream;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 class Person implements Comparator<Person>{
 	
@@ -87,6 +92,25 @@ public class Java8Exercise {
 				je.concatStringsWithCommas(Arrays.asList("siete", "ocho", "nueve"))  + " " +
 				je.getTotalChars(Arrays.asList("hola", "como", "estas")) + " " +
 				je.countWordsWithLetterH(Arrays.asList("hola", "como", "estas", "hoy", "que", "es", "ocho")));
+	
+		System.out.println();
+		System.out.println();
+		double numbers[] = new Random().doubles(10000000).toArray();
+		long start = System.currentTimeMillis();
+		System.out.println("Sequential process to get the sum of the square roots: " 
+				+ je.sumSquareRoots(numbers, false) + " -- time (ms) -> " + (System.currentTimeMillis() - start));
+		start = System.currentTimeMillis();
+		System.out.println("Parallel process to get the sum of the square roots: "
+				+ je.sumSquareRoots(numbers, true) + " -- time (ms) -> " + (System.currentTimeMillis() - start));
+	
+		System.out.println();
+		je.printFiveRandomValues(DoubleStream.generate(() -> new Random().nextDouble() * 10).boxed());
+	
+		System.out.println();
+		je.getListOfTenRandomValues(DoubleStream.generate(() -> new Random().nextDouble() * 10).boxed()).forEach(el -> System.out.println(el));
+	
+		System.out.println();
+		System.out.println(je.getArrayOfTwentyRandomValues(DoubleStream.generate(() -> new Random().nextDouble() * 10).boxed()));
 	}
 
 	//Obtiene una particion de adultos y otra de niños
@@ -134,5 +158,25 @@ public class Java8Exercise {
 	//Obtiene el numero de palabras que contienen la letra 'h'
 	public long countWordsWithLetterH(List<String> strings) {
 		return strings.stream().filter(s -> s.indexOf("h") != -1).count();
+	}
+	
+	//Suma las raices cuadradas de los elementos
+	public double sumSquareRoots(double numbers[], boolean inParallel) {
+		if(!inParallel) return Arrays.stream(numbers).map(n -> Math.sqrt(n)).sum();
+		return Arrays.stream(numbers).parallel().map(n -> Math.sqrt(n)).sum();
+	}
+	
+	//Imprime los primeros cinco valores aleatorios
+	public void printFiveRandomValues(Stream<Double> infinite) {
+		infinite.limit(5).forEach(el -> System.out.println(el));
+	}
+	
+	//Produce una lista con diez valores aleatorios
+	public List<Double> getListOfTenRandomValues(Stream<Double> infinite) {
+		return infinite.limit(10).collect(Collectors.toList());
+	}
+	
+	public Double[] getArrayOfTwentyRandomValues(Stream<Double> infinite) {
+		return infinite.limit(20).collect(Collectors.toList()).toArray(new Double[20]);
 	}
 }
