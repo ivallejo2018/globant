@@ -263,5 +263,5 @@ public class Java8Exercise {
 	//Produce un arreglo de veinte Doubles de una stream de datos aleatorios 
 	public Double[] getArrayOfTwentyRandomValues(Stream<Double> infinite) {
 		return infinite.limit(20).collect(Collectors.toList()).toArray(new Double[20]);
-	}
+	} 
 }
