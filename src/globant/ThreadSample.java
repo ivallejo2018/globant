@@ -1,5 +1,10 @@
 package globant;
 
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.locks.ReentrantLock;
+
 class CounterThread implements Runnable {
 
 	private int counter;
@@ -26,19 +31,23 @@ class PingPongPlayer implements Runnable {
 
 	private PingPongBall ball;
 	private boolean playerStarts;
+	private boolean withReentrantLock;
 	
-	public PingPongPlayer(PingPongBall ball, boolean playerStarts) {
+	public PingPongPlayer(PingPongBall ball, boolean playerStarts, boolean withReentrantLock) {
 		this.ball = ball;
 		this.playerStarts = playerStarts;
+		this.withReentrantLock = withReentrantLock;
 	}
 
 	@Override
 	public void run() {
 		try {
 			if(playerStarts) 
-				ball.hitBall();
+				if(withReentrantLock) ball.hitLockBall();
+				else ball.hitBall();
 			else	
-				ball.waitBall();			
+				if(withReentrantLock) ball.waitLockBall();
+				else ball.waitBall();	
 		} catch(InterruptedException e) {
 			e.printStackTrace();
 		}
@@ -49,6 +58,34 @@ class PingPongBall {
 
 	public boolean hasBall;
 	public boolean hasEnded;
+	public ReentrantLock lock = new ReentrantLock();
+	
+	public void waitLockBall() throws InterruptedException {
+		if(hasEnded) return;
+		lock.lock();
+		try {
+			wait();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		} finally {
+			lock.unlock();
+			hitLockBall();
+		}
+	}
+	
+	public void hitLockBall() throws InterruptedException {
+		if(hasEnded) return;
+		lock.lock();
+		try {
+			Thread.sleep(3000);	
+			System.out.println("Ball hit by: " + Thread.currentThread().getName());
+			notifyAll();			
+		} finally {
+			lock.unlock();
+			Thread.sleep(1000);				
+			waitLockBall();			
+		}
+	}
 	
 	public void waitBall() throws InterruptedException {
 		if(hasEnded) return;
@@ -110,12 +147,25 @@ public class ThreadSample {
 //		CounterThread c2 = new CounterThread(100, -1, 0);
 //		new Thread(c1).start();
 //		new Thread(c2).start();
+		int time = 20000;
+		
+		PingPongBall lockball = new PingPongBall();
+		PingPongBall ball = new PingPongBall();
 		
 		long start = System.currentTimeMillis();
-		PingPongBall ball = new PingPongBall();
-		new Thread(new PingPongPlayer(ball, true)).start();
-		new Thread(new PingPongPlayer(ball, false)).start();
-		while(System.currentTimeMillis() - start < 30000){}
+		System.out.println("Invoking threads using Executor");
+		ExecutorService executor = Executors.newFixedThreadPool(2);
+		executor.submit(new PingPongPlayer(lockball, true, true));
+		executor.submit(new PingPongPlayer(lockball, false, true));		
+		while(System.currentTimeMillis() - start < time){}
+		lockball.hasEnded = true;
+		executor.shutdown();
+		
+		start = System.currentTimeMillis();
+		System.out.println("Invoking threads in normal way");
+		new Thread(new PingPongPlayer(ball, true, false)).start();
+		new Thread(new PingPongPlayer(ball, false, false)).start();
+		while(System.currentTimeMillis() - start < time){}
 		ball.hasEnded = true;
 		
 		Singleton s = Singleton.getInstance();
