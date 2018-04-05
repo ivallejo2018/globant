@@ -2,13 +2,16 @@ package globant;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.NavigableMap;
 import java.util.Queue;
+import java.util.SortedSet;
 import java.util.Stack;
 import java.util.TreeMap;
+import java.util.TreeSet;
 
 public class LeetCode {
 
@@ -37,8 +40,122 @@ public class LeetCode {
 		System.out.println(lc.numMatchingSubseq("abcdebbe", 
 				new String[]{"a", "w", "acb", "bebbe"}));
 		System.out.println(lc.numSubarrayBoundedMax(new int[]{2,9,2,5,6},2,8));
+		System.out.println(lc.solve(new int[]{1,1,3,4,5,10}));
+		
+		System.out.println(lc.isBalanced("{"));
+//		System.out.println(lc.powerSum(100, 2));
+		
+//		lc.useOfSet();
+		System.out.println(lc.longestCommonPrefix(
+				new String[]{"","b"}));
 	}
 
+    public String longestCommonPrefix(String[] strs) {
+        if(strs.length == 0) return "";
+        
+        String longest = new String();
+        SortedSet<String> words = new TreeSet<>();
+        for(String s : strs) {
+            words.add(s);
+        }
+        
+        Iterator<String> it = words.iterator();
+        String prev = it.next();
+        String next = null;
+        while(it.hasNext()) {
+            next = it.next();
+            
+            int i = 0;
+            String testStr = prev.substring(0, i);
+            if(longest.length() < next.length()) {
+                while(testStr.length() < next.length() && i < prev.length()) {
+                	if(next.indexOf(prev.substring(0, i + 1)) == -1) break;
+                	testStr = prev.substring(0, i + 1);
+                	i++;
+                }	
+            }
+           
+            if(testStr.length() >= longest.length()) {
+                longest = testStr;
+            }
+            
+            prev = next;
+        }
+        
+        return longest;
+    }
+    
+	public void useOfSet() {
+		String array[] = new String[]{"hola","alla","mar","alicia","mama","hierro","aliciente","maread","milicia","arma","mareado"};
+		SortedSet<String> set = new TreeSet<>();
+		for(String word : array) {
+			set.add(word);
+		}
+		
+		set.forEach(w -> System.out.print(w + " "));
+	}
+	
+    public static String isBalanced(String s) {
+    	Stack<String> stack = new Stack<>();
+    	char chars[] = s.toCharArray();
+    	
+    	int k = 0;
+    	while(k < chars.length) {
+    		switch(chars[k]) {
+    			case '(':
+    				stack.push("("); break; 
+    			case '{':
+    				stack.push("{"); break;
+    			case '[':
+    				stack.push("["); break;
+    			case ')':
+    				if(stack.isEmpty() || !stack.pop().equals("(")) return "NO"; break;
+    			case '}':
+    				if(stack.isEmpty() || !stack.pop().equals("{")) return "NO"; break;
+    			case ']':
+    				if(stack.isEmpty() || !stack.pop().equals("[")) return "NO"; break;   				
+    		}
+    		
+    		k++;
+    	}
+    	
+    	return stack.isEmpty() ? "YES" : "NO";
+    }
+    
+    public static int powerSum(int X, int N) {
+    	
+    	int n = (int)Math.pow(X, (double)1/N);
+
+    	int count = 0;
+    	for(int i = n; i > 0; i--) {
+    		int next = X - (int)Math.pow(i, N);
+    		if(next == 0) count++; 
+    		else count += powerSum(next, N);
+    	}
+    	
+        return count;
+    }
+    
+    public static String solve(int[] a){
+        if(a.length == 1) return "YES";
+ 	   
+ 	   int right = 0;
+ 	   int left = 0;
+ 	   
+ 	   for(int i = 1; i < a.length; i++) {
+ 			left += a[i];
+ 	   }
+ 	   
+ 	   if(right == left) return "YES";
+ 	   for(int j = 1; j < a.length; j++) {
+ 			right += a[j-1];
+ 			left -= a[j];
+ 			if(right == left) return "YES";
+ 	   }
+ 	   
+ 	   return "NO";
+     }
+	
     public int numSubarrayBoundedMax(int[] A, int L, int R) {
     	//2,1,4,3	2 3
     	Queue<Integer> firstQueue = new LinkedList<>();
